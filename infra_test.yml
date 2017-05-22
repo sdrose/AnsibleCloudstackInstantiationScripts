@@ -1,0 +1,25 @@
+---
+   - name: provision our VMs
+     hosts: dev-cloud-vm  ## This is a label in the inventory file housing the VM hostnames for provisioning  ...
+     connection: local
+     tasks:
+       - name: ensure VMs are created and running
+         cs_instance:
+           api_region: Seqirus_DEV	## This is in the ./cloudstack.ini file.
+           name:  "{{ inventory_hostname_short }}"
+           template: US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi
+           service_offering: "1vCPU-2660MHz-4GB-RAM"
+           ip_to_networks:
+             - network:  "Seqirus DEV"
+               ip: "{{ ansible_host }}"
+           ## network:  "Seqirus DEV"
+           zone:  US-NEW-NUT-G-V-A-R-S-001
+           state:  started
+         register: vm
+
+       - name: show VM IP
+         debug: msg="VM {{ inventory_hostname }} {{ vm.default_ip }}"
+
+##       - name: assign IP to the local inventory file
+##         set_fact:  ansible_ssh_host={{ vm.default_ip }}
+

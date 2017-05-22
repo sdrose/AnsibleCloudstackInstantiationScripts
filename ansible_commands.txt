@@ -1,0 +1,2 @@
+ansible-playbook test3.yml -vvv -k 
+ cs --region=Dave_CMS4 listSecurityGroups 
