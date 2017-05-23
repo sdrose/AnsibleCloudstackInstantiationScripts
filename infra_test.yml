@@ -41,7 +41,7 @@
          cs_volume:
            api_region       : Seqirus_DEV					##  This is in the ./cloudstack.ini file.
            zone             :  US-NEW-NUT-G-V-A-R-S-001
-           name             : "DATA_{{inventory_hostname}}"			##  Volume Name
+           name             : "DATA_{{ inventory_hostname }}"			##  Volume Name
            disk_offering    : Custom
            size             : 20						##  Size in GB
            vm               : "{{ inventory_hostname }}"			##  Name of VM
