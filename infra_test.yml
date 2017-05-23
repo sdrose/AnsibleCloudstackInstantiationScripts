@@ -1,25 +1,57 @@
 ---
    - name: provision our VMs
-     hosts: dev-cloud-vm  ## This is a label in the inventory file housing the VM hostnames for provisioning  ...
+     vars:
+       cs_1cpu4gb   : "1vCPU-2660MHz-4GB-RAM" 
+       cs_2cpu8gb   : "2vCPU-2660MHz-8GB-RAM" 
+       cs_4cpu2gb   : "4vCPU-2660MHz-2GB-RAM" 
+       cs_4cpu4gb   : "4vCPU-2660MHz-4GB-RAM" 
+       cs_4cpu8gb   : "4vCPU-2660MHz-8GB-RAM" 
+       cs_8cpu2gb   : "8vCPU-2660MHz-2GB-RAM" 
+       cs_8cpu8gb   : "8vCPU-2660MHz-8GB-RAM" 
+       cs_8cpu12gb  : "8vCPU-2660MHz-12GB-RAM" 
+       cs_12cpu12gb : "12vCPU-2660MHz-12GB-RAM" 
+       cs_12cpu24gb : "12vCPU-2660MHz-24GB-RAM" 
+       cs_12cpu48gb : "12vCPU-2660MHz-48GB-RAM-ESXi" 
+       public_ip    : "75.124.77.67"
+
+     hosts: dev-cloud-vm  				## This is a label in the inventory 
+                                                        ## file housing the VM hostnames for provisioning  ...
      connection: local
      tasks:
-       - name: ensure VMs are created and running
+##     - name          : upload ssh public key			## This code portion takes a public key in the .ssh folder
+##       cs_sshkeypair :					## and uploads it into the Cloudstack CMS; naming it 'defaultkey',
+##         name        : defaultkey				## allowing connection to VM from the Ansible controller for software provisioning.
+##         public_key  : "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+       - name: Ensure VMs are created and running
          cs_instance:
-           api_region: Seqirus_DEV	## This is in the ./cloudstack.ini file.
-           name:  "{{ inventory_hostname_short }}"
-           template: US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi
-           service_offering: "1vCPU-2660MHz-4GB-RAM"
-           ip_to_networks:
-             - network:  "Seqirus DEV"
-               ip: "{{ ansible_host }}"
-           ## network:  "Seqirus DEV"
-           zone:  US-NEW-NUT-G-V-A-R-S-001
-           state:  started
-         register: vm
+           api_region       : Seqirus_DEV			## This is in the ./cloudstack.ini file.
+           name             :  "{{ inventory_hostname_short }}"
+           template         : US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi
+           service_offering : "{{ cs_1cpu4gb }}" 
+           ip_to_networks   :
+             - network      :  "Seqirus DEV"
+               ip           : "{{ ansible_host }}"
+           ## network       :  "Seqirus DEV"
+           zone             :  US-NEW-NUT-G-V-A-R-S-001
+           state            :  started
+         register           : vm
 
-       - name: show VM IP
-         debug: msg="VM {{ inventory_hostname }} {{ vm.default_ip }}"
+       - name: Add data drive to VM instance.
+         cs_volume:
+           api_region       : Seqirus_DEV					##  This is in the ./cloudstack.ini file.
+           zone             :  US-NEW-NUT-G-V-A-R-S-001
+           name             : "DATA_{{inventory_hostname}}"			##  Volume Name
+           disk_offering    : Custom
+           size             : 20						##  Size in GB
+           vm               : "{{ inventory_hostname }}"			##  Name of VM
+           state            : attached						##  'detached', also 'absent' to remove volume
 
-##       - name: assign IP to the local inventory file
-##         set_fact:  ansible_ssh_host={{ vm.default_ip }}
+       - name               : show VM IP
+         debug              : msg="VM Instance- {{ inventory_hostname }}, IP- {{ vm.default_ip }}"
 
+       - name               : assing IP to the inventory
+         set_fact           : ansible_ssh_host={{ vm.default_ip }}#
+
+##       - name             : assign IP to the local inventory file
+##         set_fact         :  ansible_ssh_host={{ vm.default_ip }}
