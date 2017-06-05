@@ -1,18 +1,20 @@
 # This is the default ansible 'hosts' file.
 #
-# It should live in /etc/ansible/hosts
-#
+
 [dev-cloud-vm:children]
-dev-database
-dev-fileserver
+dev-database 
+dev-fileserver 
 dev-middleware-server
 
+[dev-cloud-vm:vars]
+domain=dev.seqirus.com
+
 [dev-database]
-dvusnuttstdave01  ansible_host=10.112.109.121
+dvusnuttstdave01   ansible_host=10.112.109.121
 
 [dev-fileserver] 
-dvusnuttstdave02  ansible_host=10.112.109.122
+dvusnuttstdave02   ansible_host=10.112.109.122
 
 [dev-middleware-server]
-dvusnuttstdave03  ansible_host=10.112.109.123
+dvusnuttstdave03   ansible_host=10.112.109.123
 

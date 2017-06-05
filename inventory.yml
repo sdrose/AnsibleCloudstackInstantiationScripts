@@ -1,0 +1,52 @@
+---
+[linux_localvm]
+linsrv01 ansible_host=192.168.1.101  ansible_ssh_public_port=2022
+linsrv02 ansible_host=192.168.1.166  ansible_ssh_public_port=2122
+ 
+[windows_localvm]
+winsrv01  ansible_host=192.168.1.139
+
+[linux_btcloud]
+linsrv04  ansible_host=10.1.0.22   ansible_ssh_public_port=2222
+linsrv05  ansible_host=10.1.0.23   ansible_ssh_public_port=2322
+
+[windows_btcloud]
+winsrv02  ansible_host=10.1.0.21
+
+[linux:children]
+linux_localvm  
+linux_btcloud  
+
+[windows:children]
+windows_localvm
+windows_btcloud
+
+[linux:vars]
+#################
+##
+## In the :vars section of an inventory file, proper format is variable=value 
+## Required variables for controlling a Linux Server via Ansible are:
+##  ansible_user= <username> 
+##  ansible_password= <password>
+##
+ansible_user=setup 
+ansible_password=100Meadow
+ansible_ssh_port=22
+
+[windows:vars]
+#################
+##
+## In the :vars section of an inventory file, proper format is variable=value 
+## Required variables for controlling a Windows Server via Ansible are:
+##    ansible_user= <username>
+##    ansible_password= <password>
+##    ansible_port= 5986
+##    ansible_connection= winrm
+##    ansible_winrm_server_cert_validation= ignore  # Used when using a self-signed certificate
+##
+ansible_user= Administrator
+ansible_password= 100MeadowSt
+ansible_port= 5986
+ansible_connection= winrm
+ansible_winrm_server_cert_validation= ignore
+public_ip=75.124.77.62

@@ -1,0 +1,8 @@
+---
+- name:  Provision, or ensure as provisioned, VM instances in the BT Cloud.
+  hosts:  "{{ cs_hosts }}"
+  connection: local
+  become: no
+  gather_facts: yes
+  roles:
+  - cloudstack_provision

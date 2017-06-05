@@ -1,0 +1,36 @@
+---
+- name: Build VM or ensure it is already established.
+  local_action:
+    module             :  cs_instance
+    api_region         :  "{{ api_region }}"                 ## This is in the ./cloudstack.ini file.
+    name               :  "{{ inventory_hostname_short }}"
+    service_offering   :  "{{ cs_1cpu4gb }}" 
+    template           :  "{{ iso_template }}"
+    ip_to_networks     :
+      - network        :  "{{ network }}"
+        ip             :  "{{ ansible_host }}"
+    zone               :  "{{ cs_zone }}"
+    state              :  started
+
+- name               : Open Firewall SSH Port and establish NAT.
+  cs_portforward:
+    ip_address       : "{{ public_ip }}"
+    vm               : "{{ inventory_hostname_short }}"
+    public_port      : "{{ ansible_ssh_public_port }}"
+    private_port     : "{{ ansible_ssh_port }}"
+
+
+#- name               : show VM IP
+#  debug              : msg="VM Instance- {{  }}, IP- {{ vm_retval.default_ip }}, "
+
+#- name: ensure firewall port(s) opened open on public ip.
+#  cs_firewall:
+#    ip_address: "{{ public_ip }}"
+#    port: "{{ item.port }}"
+#    cidr: "{{ item.cidr | default('0.0.0.0/0') }}"
+#  with_items: "{{ cs_firewall }}"
+#  when: public_ip is defined
+
+#- name: ensure static NATs
+#  cs_staticnat: vm="{{ inventory_hostname_short }}" ip_address="{{ public_ip }}"
+#  when: public_ip is defined

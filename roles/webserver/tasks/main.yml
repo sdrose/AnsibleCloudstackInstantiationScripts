@@ -1,0 +1,22 @@
+---
+- name: Ensure Apache installed
+  yum:  name=httpd state=present
+
+- name: Start Apache
+  service: name=httpd state=started enabled=yes
+
+- file:
+    path: /var/www/html/ansible
+    state: directory
+    mode: 0755
+    owner: setup
+    group: setup
+
+- name: Deploy configuration file
+  template: src=httpd.j2 dest=/etc/httpd.conf
+  notify:
+  - Restart Apache
+
+- name: Copy site files
+  template: src=index.j2 dest={{ doc_root }}/index.html
+

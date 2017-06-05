@@ -1,0 +1,38 @@
+---
+- name: Create ec2 vm instances
+  hosts: localhost
+    connection: local
+    gather_facts: False
+  vars:
+    how_many: 1
+    instance_type: c4.8xlarge
+    security_group: SecurityGroupIdGoesHere
+
+  image: ami-42908907
+    region: us-west-1
+    keypair: KeyPairName
+    groupname: crunchers
+    sudo: yes
+  tasks:
+
+- name: create VMs
+  ec2:
+    key_name: "{{ keypair }}"
+    group_id: "{{ security_group }}"
+    instance_type: "{{ instance_type }}"
+    image: "{{ image }}"
+    wait: true
+    region: "{{ region }}"
+  exact_count: “{{ how_many }}” 
+    count_tag:
+    Name: crunchy
+    instance_tags:
+    Name: crunchy
+
+register: VMs
+  - name: add all instance public IPs to host group in memory
+    add_host: hostname={{ item.public_ip }} groups={{ groupname }}
+    with_items: VMs.instances
+  - name: Wait for SSH to come up
+    wait_for: host={{ item.public_dns_name }} port=22 delay=60 timeout=320 state=started
+    with_items: VMs.instances

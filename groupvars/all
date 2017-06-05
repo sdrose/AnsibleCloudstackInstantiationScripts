@@ -1,0 +1,8 @@
+---
+# file:	group_vars/all
+ansible_connection: ssh
+ansible_become_user: setup
+ansible_become_pass: 100Meadow
+
+
+

@@ -1,0 +1,25 @@
+---
+http_port    : 80
+doc_dir      : /ansible/
+doc_root     : /var/www/html/ansible/
+max_clients  : 5
+server_admin : root@localhost
+site_root    : /vaw/www/html
+iso_template : "US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi"
+cs_1cpu4gb   : "1vCPU-2660MHz-4GB-RAM" 
+cs_2cpu8gb   : "2vCPU-2660MHz-8GB-RAM" 
+cs_4cpu2gb   : "4vCPU-2660MHz-2GB-RAM" 
+cs_4cpu4gb   : "4vCPU-2660MHz-4GB-RAM" 
+cs_4cpu8gb   : "4vCPU-2660MHz-8GB-RAM" 
+cs_8cpu2gb   : "8vCPU-2660MHz-2GB-RAM" 
+cs_8cpu8gb   : "8vCPU-2660MHz-8GB-RAM" 
+cs_8cpu12gb  : "8vCPU-2660MHz-12GB-RAM" 
+cs_12cpu12gb : "12vCPU-2660MHz-12GB-RAM" 
+cs_12cpu24gb : "12vCPU-2660MHz-24GB-RAM" 
+cs_12cpu48gb : "12vCPU-2660MHz-48GB-RAM-ESXi" 
+network      : "Default"
+public_ip    : "75.124.77.67"
+cs_zone      : US-NEW-NUT-G-V-A-R-S-001
+api_region   : Dave_CMS4			##  This is in the ./cloudstack.ini file.
+cs_hosts     : linux_btcloud  			## This is a label in the inventory 
+                                                ## file housing the VM hostnames for provisioning  ...
