@@ -6,3 +6,4 @@
   gather_facts: yes
   roles:
   - cloudstack_provision
+  - apt

@@ -2,34 +2,63 @@
 - name: Build VM or ensure it is already established.
   local_action:
     module             :  cs_instance
-    api_region         :  "{{ api_region }}"                 ## This is in the ./cloudstack.ini file.
-    name               :  "{{ inventory_hostname_short }}"
-    service_offering   :  "{{ cs_1cpu4gb }}" 
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    name               :  "{{ inventory_hostname_short }}"    ## inventory_hostname_short is a 'magic variable', hostname up to the first '.'
+    service_offering   :  "{{ cs_1cpu4gb }}"                
     template           :  "{{ iso_template }}"
     ip_to_networks     :
       - network        :  "{{ network }}"
         ip             :  "{{ ansible_host }}"
-    zone               :  "{{ cs_zone }}"
     state              :  started
+  register             :  cs_instance_return
 
-- name               : Open Firewall SSH Port and establish NAT.
-  cs_portforward:
-    ip_address       : "{{ public_ip }}"
-    vm               : "{{ inventory_hostname_short }}"
-    public_port      : "{{ ansible_ssh_public_port }}"
-    private_port     : "{{ ansible_ssh_port }}"
+- name                 :  Print cs_instance_return debug info
+  debug                :  msg="cs_instance return info- {{ cs_instance_return }}"
 
+- name: ensure firewall port(s) opened open on public ip.
+  local_action:
+    module             :  cs_firewall
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    ip_address         :  "{{ public_ip }}"
+    port               :  "{{ ansible_ssh_public_port }}"
+    cidr               :  "0.0.0.0/0"
+  register             :  cs_firewall_return
+#  with_items           :  "{{ cs_firewall }}"
+#  when                 :  public_ip is defined
 
-#- name               : show VM IP
-#  debug              : msg="VM Instance- {{  }}, IP- {{ vm_retval.default_ip }}, "
+- name                 :  Print cs_firewall return info
+  debug                :  msg="cs_firewall_return- {{ cs_firewall_return }}"
 
-#- name: ensure firewall port(s) opened open on public ip.
-#  cs_firewall:
-#    ip_address: "{{ public_ip }}"
-#    port: "{{ item.port }}"
-#    cidr: "{{ item.cidr | default('0.0.0.0/0') }}"
-#  with_items: "{{ cs_firewall }}"
-#  when: public_ip is defined
+- name: Configure Portforward and establish NAT.
+  local_action:
+    module             :  cs_portforward
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    network            :  "{{ network }}"
+    ip_address         :  "{{ public_ip }}"
+    vm                 :  "{{ inventory_hostname_short }}"
+    public_port        :  "{{ ansible_ssh_public_port }}"
+    private_port       :  "{{ ansible_ssh_port }}"
+  register             :  cs_portforward_return
+
+- name                 :  Print cs_portforward_return info
+  debug                :  msg="cs_portforward- {{ cs_portforward_return }}"
+
+# Create/attach volume to instance
+- local_action:
+    module             :  cs_volume
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    name               :  "DATA_{{ inventory_hostname_short }}"
+    disk_offering      :  Custom
+    size               :  20
+    vm                 :  "{{ inventory_hostname_short }}"
+    state              :  attached
+  register             :  cs_volume_return
+
+- name                 :  Print cs_volume_return info
+  debug                :  msg="cs_volume_return- {{ cs_volume_return }}, "
 
 #- name: ensure static NATs
 #  cs_staticnat: vm="{{ inventory_hostname_short }}" ip_address="{{ public_ip }}"
