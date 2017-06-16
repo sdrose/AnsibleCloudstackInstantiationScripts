@@ -1,25 +1,20 @@
 ---
+###################################################################################
+##  
+##   Windows Servers
+##  
+
 [linux_localvm]
-linsrv01 ansible_host=192.168.1.101  ansible_ssh_public_port=2022
-linsrv02 ansible_host=192.168.1.166  ansible_ssh_public_port=2122
+linsrv03 ansible_host=192.168.1.101  
+linsrv04 ansible_host=192.168.1.166  
  
-[windows_localvm]
-winsrv01  ansible_host=192.168.1.139
-
 [linux_btcloud]
-linsrv04  ansible_host=10.1.0.22   ansible_ssh_public_port=2222
-linsrv05  ansible_host=10.1.0.23   ansible_ssh_public_port=2322
-
-[windows_btcloud]
-winsrv02  ansible_host=10.1.0.21
+linsrv01  ansible_host=75.124.77.68  ansible_ssh_port=2022 ansible_user=root  private_ip=10.1.0.20 data_drive_size=20
+linsrv02  ansible_host=75.124.77.68  ansible_ssh_port=2122 ansible_user=root  private_ip=10.1.0.21 data_drive_size=0
 
 [linux:children]
 linux_localvm  
 linux_btcloud  
-
-[windows:children]
-windows_localvm
-windows_btcloud
 
 [linux:vars]
 #################
@@ -29,9 +24,27 @@ windows_btcloud
 ##  ansible_user= <username> 
 ##  ansible_password= <password>
 ##
-ansible_user=setup 
-ansible_password=100Meadow
-ansible_ssh_port=22
+#ansible_user=root
+ansible_ssh_private_key_file= "/home/drose/.ssh/id_rsa"
+##  ansible_password=100MeadowSt
+##  ansible_ssh_port=22
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+
+###################################################################################
+##  
+##   Windows Servers
+##  
+
+[windows_localvm]
+winsrv01  ansible_host=192.168.1.139
+
+[windows_btcloud]
+winsrv02  ansible_host=10.1.0.21
+
+[windows:children]
+windows_localvm
+windows_btcloud
 
 [windows:vars]
 #################

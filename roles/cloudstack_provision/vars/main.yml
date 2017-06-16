@@ -2,7 +2,7 @@
 http_port    : 80
 doc_dir      : /ansible/
 doc_root     : /var/www/html/ansible/
-max_clients  : 5
+max_clients  : 15
 server_admin : root@localhost
 site_root    : /vaw/www/html
 iso_template : "US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi"
@@ -18,7 +18,7 @@ cs_12cpu12gb : "12vCPU-2660MHz-12GB-RAM"
 cs_12cpu24gb : "12vCPU-2660MHz-24GB-RAM" 
 cs_12cpu48gb : "12vCPU-2660MHz-48GB-RAM-ESXi" 
 network      : "Default"
-public_ip    : "75.124.77.68"
+#public_ip    : "75.124.77.68"
 cs_zone      : US-NEW-NUT-G-V-A-R-S-001
 api_region   : Dave_CMS4			##  This is in the ./cloudstack.ini file.
 cs_hosts     : linux_btcloud  			##  This is a label in the inventory 
