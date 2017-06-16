@@ -5,12 +5,12 @@
 ##  
 
 [linux_localvm]
-linsrv03 ansible_host=192.168.1.101  
+linsrv03 ansible_host=192.168.1.140  ##192.168.1.101  
 linsrv04 ansible_host=192.168.1.166  
  
 [linux_btcloud]
-linsrv01  ansible_host=75.124.77.68  ansible_ssh_port=2022 ansible_user=root  private_ip=10.1.0.20 data_drive_size=20
-linsrv02  ansible_host=75.124.77.68  ansible_ssh_port=2122 ansible_user=root  private_ip=10.1.0.21 data_drive_size=0
+linsrv01 create_new_public_ip=true  ansible_ssh_port=2022 ansible_user=root  private_ip=10.1.0.20 data_drive_size=20   
+linsrv02 ansible_host=75.124.77.68  ansible_ssh_port=2122 ansible_user=root  private_ip=10.1.0.21 data_drive_size=0  
 
 [linux:children]
 linux_localvm  
@@ -26,9 +26,9 @@ linux_btcloud
 ##
 #ansible_user=root
 ansible_ssh_private_key_file= "/home/drose/.ssh/id_rsa"
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 ##  ansible_password=100MeadowSt
 ##  ansible_ssh_port=22
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 
 ###################################################################################

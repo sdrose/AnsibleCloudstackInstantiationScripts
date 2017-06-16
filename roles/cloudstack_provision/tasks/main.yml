@@ -1,4 +1,33 @@
 ---
+# Associate an IP address conditonally
+- name: Create a valid Public IP Address 
+  local_action:
+    module             :  cs_ip_address
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    network            :  "{{ network }}"
+  register             :  cs_ip_address_return
+  ignore_errors        :  True
+  when                 :  
+    - create_new_public_ip is defined
+    - create_new_public_ip == 'true'
+
+- name:  Set ansible_host variable with the newly-defined Public IP address
+  set_fact:
+    ansible_host       :  "{{ cs_ip_address_return.ip_address }}"
+    public_ip          :  "{{ cs_ip_address_return.ip_address }}"
+  ignore_errors        :  True
+  when                 :  
+    - create_new_public_ip is defined
+    - create_new_public_ip == 'true'
+  
+- name:  Print cs_instance_return debug info
+  debug                :  msg="Public IP- {{ cs_ip_address_return.ip_address }}"
+  ignore_errors        :  True
+  when                 :  
+    - create_new_public_ip is defined
+    - create_new_public_ip == 'true'
+
 - name: Insert ssh public key into CMS
   local_action:
     module             :  cs_sshkeypair
@@ -26,15 +55,24 @@
   ignore_errors        :  True
   when                 :  cs_instance_return.password is defined
 
+- name:  Set ansible_host variable with the newly-defined Public IP address
+  set_fact:
+    ansible_password   :  "{{ cs_instance_return.password }}"
+  ignore_errors        :  True
+  when                 :  
+    - create_new_public_ip is defined
+    - create_new_public_ip == 'true'
+
+
 - name: Establish NAT and create ssh portforward to VM ssh port 22.
   local_action:
     module             :  cs_portforward
-    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
-    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
-    network            :  "{{ network }}"
-    ip_address         :  "{{ ansible_host }}"
-    vm                 :  "{{ inventory_hostname_short }}"
-    public_port        :  "{{ ansible_ssh_port }}"
+    api_region         :  "{{api_region}}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{cs_zone}}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    network            :  "{{network}}"
+    ip_address         :  "{{public_ip}}"
+    vm                 :  "{{inventory_hostname_short}}"
+    public_port        :  "{{ansible_ssh_port}}"
     private_port       :  22
     protocol           :  tcp
     open_firewall      :  yes
@@ -61,16 +99,15 @@
   debug                :  msg="cs_volume_return- {{ cs_volume_return }}"
 
 # Current VM login is root, now create a 'setup' user.
-- name: Add user via /etc/passwd with membership to sudo group.
+- name: Add user via /etc/passwd.
   user: 
     name               :  setup
     shell              :  /bin/bash
-    groups             :  sudo
     append             :  yes
     state              :  present
     createhome         :  yes
-  become: true
-  register: userCreate_return
+  become               :  false                                       ## False because currently we are user 'root'
+  register             : userCreate_return
 
 
 - name: Test Command Prompt
