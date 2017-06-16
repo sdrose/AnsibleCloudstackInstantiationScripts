@@ -21,7 +21,7 @@
 ####   cs_8cpu8gb,   cs_8cpu12gb,  
 ####   cs_12cpu12gb, cs_12cpu24gb, cs_12cpu48gb 
 ####   network      : "Default"
-####   #public_ip    : "75.124.77.68"
+####   public_ip    : "75.124.77.68"
 ####   cs_zone      : US-NEW-NUT-G-V-A-R-S-001
 ####   api_region   : Dave_CMS4                        ##  This is in the ./cloudstack.ini file.
 ####   cs_hosts     : linux_btcloud                    ##  This is a label in the inventory file housing the VM hostnames for provisioning  ...
