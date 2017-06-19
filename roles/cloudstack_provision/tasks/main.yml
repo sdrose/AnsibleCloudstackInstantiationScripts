@@ -110,16 +110,16 @@
   register             : userCreate_return
 
 
-- name: Test Command Prompt
-  command: hostname
-  register: command_return
+- name                 : Test Command Prompt
+  command              : hostname
+  register             : command_return
 
 - name                 :  Print command_return info
   debug                :  msg="command return (hostname)- {{ command_return }}"
 
-- name: Test Command Prompt
-  command: whoami
-  register: command_return
+- name                 : Test Command Prompt
+  command              : whoami
+  register             : command_return
 
 - name                 :  Print cs_volume_return info
   debug                :  msg="command return (whoami)- {{ command_return }}"

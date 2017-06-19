@@ -41,8 +41,13 @@
 ---
 - name:  Provision, or ensure as provisioned, VM instances in the BT Cloud.
   hosts:  "{{ cs_hosts }}"
+  become: no
   gather_facts: no
   roles:
   - cloudstack_provision
   - apt
+
+- name:  Gather facts and allow for Become User.
+  hosts:  "{{ cs_hosts }}"
+  gather_facts: yes
 #  become: yes
