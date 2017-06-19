@@ -1,6 +1,14 @@
 ---
-- name: Update and upgrade apt packages
-  apt:
-    update_cache: yes
-    cache_valid_time: 86400 #One day
-    upgrade: yes
+- name                           :  Install package htop
+  apt:                           
+    state                        :  present
+    update_cache                 :  yes
+    name                         :  htop
+
+#- name                          :  Update and upgrade apt packages
+#  apt                           :
+#    update_cache                :  yes
+#    cache_valid_time            :  86400                              ## One day cache valid time
+#    upgrade                     :  yes
+#    become                      :  yes
+
