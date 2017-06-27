@@ -1,0 +1,148 @@
+---
+# Associate an IP address conditonally
+- name                 :  Create a valid Public IP Address 
+  local_action         :
+    module             :  cs_ip_address
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    network            :  "{{ network }}"
+  register             :  cs_ip_address_return
+  ignore_errors        :  True
+  when                 :  
+    - create_new_public_ip is defined
+    - create_new_public_ip == 'true'
+
+- name                 :  Set ansible_host variable with the newly-defined Public IP address
+  set_fact             :
+    ansible_host       :  "{{ cs_ip_address_return.ip_address }}"
+    public_ip          :  "{{ cs_ip_address_return.ip_address }}"
+  ignore_errors        :  True
+  when                 :  
+    - create_new_public_ip is defined
+    - create_new_public_ip == 'true'
+  
+- name                 :  Print cs_instance_return debug info
+  debug                :  msg="Public IP- {{ cs_ip_address_return.ip_address }}"
+  ignore_errors        :  True
+  when                 :  
+    - create_new_public_ip is defined
+    - create_new_public_ip == 'true'
+
+- name                 :  Insert ssh public key into CMS
+  local_action         :
+    module             :  cs_sshkeypair
+    name               :  sdr-test-ssh-key                    ## inventory_hostname_short is a 'magic variable', hostname up to the first '.'
+    public_key         :  "{{ lookup('file', '/home/drose/.ssh/id_rsa.pub') }}"
+  register             :  install_sshkey_return
+
+- name                 :  Build VM instance or ensure it is already established.
+  local_action         :
+    module             :  cs_instance
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    name               :  "{{ inventory_hostname_short }}"    ## inventory_hostname_short is a 'magic variable', hostname up to the first '.'
+    service_offering   :  "{{ cs_1cpu4gb }}"                
+    template           :  "{{ iso_template }}"
+    ip_to_networks     :
+      - network        :  "{{ network }}"
+        ip             :  "{{ private_ip }}"
+    ssh_key            :  sdr-test-ssh-key
+    state              :  started
+  register             :  cs_instance_return
+
+- name                 :  Write VM passwords to a local file for future access.
+  shell                :  echo "{{ cs_instance_return.name }} - {{ cs_instance_return.password }}" >> ./file_output/vm_password_file.txt
+  delegate_to          :  localhost
+  when                 :  
+    - cs_instance_return.password is defined
+
+- name                 :  Set ansible_host variable with the newly-defined Public IP address
+  set_fact             :
+    ansible_password   :  "{{ cs_instance_return.password }}"
+  ignore_errors        :  True
+  when                 :  
+    - create_new_public_ip is defined
+    - create_new_public_ip == 'true'
+
+- name                 :  Print cs_instance_return debug info
+  debug                :  msg="Password- {{ cs_instance_return.password }}"
+  ignore_errors        :  True
+  when                 :  cs_instance_return.password is defined
+
+
+- name                 :  Establish NAT and create ssh portforward to VM ssh port 22.
+  local_action         : 
+    module             :  cs_portforward
+    api_region         :  "{{api_region}}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{cs_zone}}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    network            :  "{{network}}"
+    ip_address         :  "{{public_ip}}"
+    vm                 :  "{{inventory_hostname_short}}"
+    public_port        :  "{{ansible_port}}"
+    private_port       :  22
+    protocol           :  tcp
+    open_firewall      :  yes
+    state              :  present
+  register             :  cs_portforward_return
+
+- name                 :  Print cs_portforward_return info
+  debug                :  msg="cs_portforward- {{ cs_portforward_return }}"
+
+# Current VM login is root, now create a 'setup' user.
+- name                 :  Add user via /etc/passwd.
+  user:   
+    name=setup
+    comment="S. David Rose"
+    groups=sudo
+    append=yes
+    shell=/bin/bash
+    state=present
+    createhome=yes
+    password='$1$saltless$vHC3xY8NlYw7K/zbpwnnW0'        ## mypass
+  register             :  userCreate_return
+
+- name                 :  Print userCreate_return info
+  debug                :  msg="user- {{ userCreate_return }}"
+
+# Current VM login is root, now create a 'setup' user.
+- name                 :  Add user via /etc/passwd.
+  user:   
+    name=dave.rose
+    comment="Dave Rose"
+    groups=sudo
+    append=yes
+    shell=/bin/bash
+    state=present
+    createhome=yes
+    password='$1$saltless$vHC3xY8NlYw7K/zbpwnnW0'        ## mypass
+  register             :  userCreate_return
+
+- name                 :  Print userCreate_return info
+  debug                :  msg="user- {{ userCreate_return }}"
+
+- name                 :  Set authorized key for user ubuntu copying it from current user
+  authorized_key       : 
+    user=setup
+    state=present
+    key="{{ lookup('file', '/home/drose/.ssh/id_rsa.pub') }}"
+  register             :  userSSHkey_return
+
+- name                 :  Print userSSHkey_return info
+  debug                :  msg="user public key add info- {{ userSSHkey_return }}"
+
+- name                 :  Create/attach DATA volume to VM instance.
+  local_action         :
+    module             :  cs_volume
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    name               :  "DATA_{{ inventory_hostname_short }}"
+    disk_offering      :  Custom
+    size               :  "{{ data_drive_size }}"
+    vm                 :  "{{ inventory_hostname_short }}"
+    state              :  attached
+  when                 :  data_drive_size|int > 0
+  register             :  cs_volume_return
+
+- name                 :  Print cs_volume_return info
+  debug                :  msg="cs_volume_return- {{ cs_volume_return }}"
+
