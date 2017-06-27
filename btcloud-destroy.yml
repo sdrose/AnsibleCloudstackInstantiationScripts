@@ -2,7 +2,7 @@
 ####
 ####  cloudstack_provision.yml
 ####  
-####  to execute:  ansible-playbook cloudstack_provision.yml -u root -k
+####  to execute:  ansible-playbook cloudstack_provision.yml -u root 
 ####               SSH Password:  (Password to unlock ~/.ssh/id_rsa
 ####
 ####  relevant vars:  
@@ -44,10 +44,6 @@
   become: no
   gather_facts: no
   roles:
-  - cloudstack_provision
-  - apt
+  - destroyVMs
 
-- name:  Gather facts and allow for Become User.
-  hosts:  "{{ cs_hosts }}"
-  gather_facts: yes
-#  become: yes
+

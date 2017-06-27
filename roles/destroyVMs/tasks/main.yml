@@ -1,0 +1,27 @@
+---
+# Associate an IP address conditonally
+- name                 :  Create/attach DATA volume to VM instance.
+  local_action         :
+    module             :  cs_volume
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    name               :  "DATA_{{ inventory_hostname_short }}"
+    state              :  absent
+    force              :  true
+  when                 :  data_drive_size|int > 0
+  register             :  cs_volume_return
+
+- name                 :  Build VM instance or ensure it is already established.
+  local_action         :
+    module             :  cs_instance
+    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    name               :  "{{ inventory_hostname_short }}"    ## inventory_hostname_short is a 'magic variable', hostname up to the first '.'
+    service_offering   :  "{{ cs_1cpu4gb }}"                
+    template           :  "{{ iso_template }}"
+    ssh_key            :  sdr-test-ssh-key
+    state              :  absent
+  register             :  cs_instance_return
+
+
+

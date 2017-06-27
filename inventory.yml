@@ -9,14 +9,14 @@ linsrv11 ansible_host=192.168.1.140  ##192.168.1.101
 linsrv12 ansible_host=192.168.1.166  
  
 [linux_btcloud]
-linsrv01 create_new_public_ip=true  ansible_ssh_port=2022 ansible_user=root  private_ip=10.1.0.20 data_drive_size=20   
-linsrv02 ansible_host=75.124.77.68  ansible_ssh_port=2122 ansible_user=root  private_ip=10.1.0.21 data_drive_size=0  
-linsrv03 ansible_host=75.124.77.68  ansible_ssh_port=2222 ansible_user=root  private_ip=10.1.0.22 data_drive_size=21  
-linsrv04 ansible_host=75.124.77.68  ansible_ssh_port=2322 ansible_user=root  private_ip=10.1.0.23 data_drive_size=22  
-linsrv05 ansible_host=75.124.77.68  ansible_ssh_port=2422 ansible_user=root  private_ip=10.1.0.24 data_drive_size=23  
-linsrv06 ansible_host=75.124.77.68  ansible_ssh_port=2522 ansible_user=root  private_ip=10.1.0.25 data_drive_size=24  
-linsrv07 ansible_host=75.124.77.68  ansible_ssh_port=2622 ansible_user=root  private_ip=10.1.0.26 data_drive_size=25  
-linsrv08 ansible_host=75.124.77.68  ansible_ssh_port=2722 ansible_user=root  private_ip=10.1.0.27 data_drive_size=26  
+linsrv1.sdavidrosephotography.com:4122 private_ip=10.1.0.41 data_drive_size=0
+linsrv2.sdavidrosephotography.com:4222 private_ip=10.1.0.42 data_drive_size=0
+linsrv3.sdavidrosephotography.com:4322 private_ip=10.1.0.43 data_drive_size=21
+linsrv4.sdavidrosephotography.com:4422 private_ip=10.1.0.44 data_drive_size=22
+linsrv5.sdavidrosephotography.com:4522 private_ip=10.1.0.45 data_drive_size=23
+#linsrv6 ansible_host=75.124.74.182  ansible_port=4622 private_ip=10.1.0.46 data_drive_size=24
+#linsrv7 ansible_host=75.124.77.68  ansible_ssh_port=4722 private_ip=10.1.0.47 data_drive_size=25
+#linsrv8 create_new_public_ip=true  ansible_ssh_port=4822 private_ip=10.1.0.48 data_drive_size=20
 
 [linux:children]
 linux_localvm  
@@ -30,11 +30,12 @@ linux_btcloud
 ##  ansible_user= <username> 
 ##  ansible_password= <password>
 ##
-#ansible_user=root
+public_ip=75.124.74.182
+privlege_user=root
+unprivlege_user=setup
 ansible_ssh_private_key_file= "/home/drose/.ssh/id_rsa"
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-##  ansible_password=100MeadowSt
-##  ansible_ssh_port=22
+##  ansible_password=1**Me****S*
 
 
 ###################################################################################
@@ -43,10 +44,10 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 ##  
 
 [windows_localvm]
-winsrv01  ansible_host=192.168.1.139
+winsrv01 ansible_host=192.168.1.139
 
 [windows_btcloud]
-winsrv02  ansible_host=10.1.0.21
+winsrv02 ansible_host=10.1.0.21
 
 [windows:children]
 windows_localvm
@@ -64,7 +65,7 @@ windows_btcloud
 ##    ansible_winrm_server_cert_validation= ignore  # Used when using a self-signed certificate
 ##
 ansible_user= Administrator
-ansible_password= 100MeadowSt
-ansible_port= 5986
-ansible_connection= winrm
-ansible_winrm_server_cert_validation= ignore
+ansible_password=100MeadowSt
+ansible_port=5986
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
