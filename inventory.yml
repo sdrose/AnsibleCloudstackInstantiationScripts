@@ -9,6 +9,12 @@ linsrv11 ansible_host=192.168.1.140  ##192.168.1.101
 linsrv12 ansible_host=192.168.1.166  
  
 [linux_btcloud]
+#################
+##
+## hostname-to-IP resolution is done via /etc/hosts or maybe DNS. 
+## this avoides using ansible_host variable, which, when used with a shared IP host, 
+##   causes certain modules (user, apt) to run only on a single host entry.
+##
 linsrv1.sdavidrosephotography.com:4122 private_ip=10.1.0.41 data_drive_size=0
 linsrv2.sdavidrosephotography.com:4222 private_ip=10.1.0.42 data_drive_size=0
 linsrv3.sdavidrosephotography.com:4322 private_ip=10.1.0.43 data_drive_size=21

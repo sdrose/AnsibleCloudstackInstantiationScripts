@@ -44,7 +44,7 @@
   become: no
   gather_facts: no
   roles:
-  - instantiateVMs
+  - instantiateLinuxVMs
 
 - name:  Begin the software installation portion on the instantiated Linux VMs
   hosts:  linux_btcloud

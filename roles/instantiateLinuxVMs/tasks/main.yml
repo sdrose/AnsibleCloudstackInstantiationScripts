@@ -91,14 +91,18 @@
 # Current VM login is root, now create a 'setup' user.
 - name                 :  Add user via /etc/passwd.
   user:   
-    name=setup
-    comment="S. David Rose"
+    name="{{ item.name }}"
+    comment="{{ item.comment }}"
     groups=sudo
     append=yes
     shell=/bin/bash
     state=present
     createhome=yes
     password='$1$saltless$vHC3xY8NlYw7K/zbpwnnW0'        ## mypass
+  with_items:
+    - { name: 'setup',  comment: 'S. David Rose1' }
+    - { name: 'setup2', comment: 'S. David Rose2' }
+    
   register             :  userCreate_return
 
 - name                 :  Print userCreate_return info
