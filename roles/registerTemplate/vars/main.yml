@@ -1,6 +1,6 @@
 ---
+iso_template : "US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi"
 #iso_template : "US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi"
-iso_template : "CentOS 7.2"
 cs_1cpu4gb   : "1vCPU-2660MHz-4GB-RAM" 
 cs_2cpu8gb   : "2vCPU-2660MHz-8GB-RAM" 
 cs_4cpu2gb   : "4vCPU-2660MHz-2GB-RAM" 
@@ -13,7 +13,7 @@ cs_12cpu12gb : "12vCPU-2660MHz-12GB-RAM"
 cs_12cpu24gb : "12vCPU-2660MHz-24GB-RAM" 
 cs_12cpu48gb : "12vCPU-2660MHz-48GB-RAM-ESXi" 
 network      : "Default"
-cs_zone      : US-NEW-NUT-G-V-A-R-S-001
-api_region   : Dave_CMS4			##  This is in the ./cloudstack.ini file.
-cs_hosts     : linux_btcloud  			##  This is a label in the inventory 
+cs_zone      : GB-LPL-MINI-P-V-A-R-S-001
+api_region   : Seqirus_QATEST			##  This is in the ./cloudstack.ini file.
+cs_hosts     : localhost  			##  This is a label in the inventory 
                                                 ##  file housing the VM hostnames for provisioning  ...

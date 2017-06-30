@@ -1,0 +1,20 @@
+---
+- name                      :  Register a new ISO from URL, or ensure it is already established.
+  local_action              :
+    module                  :  cs_iso
+    url                     :  'http://75.124.77.62/clonezilla-live-20170220-yakkety-amd64.iso'
+    api_region              :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone                    :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    name                    :  Clonezilla
+    bootable                :  true
+    os_type                 :  "Other Ubuntu (64-bit)"
+#    is_featured             :  false
+    iso_filter              :  selfexecutable
+    state                   :  present
+  register                  :  cs_iso_return
+
+- name                      :  Display the return values from registering a template.
+  shell                     :  echo "{{ cs_iso_return }}"
+  delegate_to               :  localhost
+
+

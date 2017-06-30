@@ -1,0 +1,5 @@
+---
+cs_zone      : GB-LPL-MINI-P-V-A-R-S-001
+api_region   : Seqirus_QATEST			##  This is in the ./cloudstack.ini file.
+cs_hosts     : localhost  			##  This is a label in the inventory 
+                                                ##  file housing the VM hostnames for provisioning  ...

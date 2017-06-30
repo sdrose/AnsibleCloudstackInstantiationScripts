@@ -1,3 +1,4 @@
 file_output/**
-cloudstack.ini
 cloudstack.ini.bak
+cloudstack.ini
+*.retry

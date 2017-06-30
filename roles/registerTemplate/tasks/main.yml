@@ -1,0 +1,27 @@
+---
+- name                      :  Register a new template from URL, or ensure it is already established.
+  local_action              :
+    module                  :  cs_template
+    api_region              :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    zone                    :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    name                    :  "CentOS 7.2"
+    display_text            :  "CentOS 7.2 OS. 'Password Script' enabled. 'Minimal' Software installed.  Does NOT start to GUI. LVM with ext3/4 file system. Ansible-deployed."
+    url                     :  "http://75.124.77.62/CentOS7-csTemplate.ova"
+    hypervisor              :  VMware
+    format                  :  OVA
+    os_type                 :  "CentOS 7.2"
+    is_routing              :  null
+    is_featured             :  false
+    is_public               :  false
+    is_extractable          :  true
+    requires_hvm            :  true
+    password_enabled        :  yes
+    sshkey_enabled          :  true
+    state                   :  present
+  register                  :  cs_template_return
+
+- name                      :  Display the return values from registering a template.
+  shell                     :  echo "{{ cs_template_return }}"
+  delegate_to               :  localhost
+
+
