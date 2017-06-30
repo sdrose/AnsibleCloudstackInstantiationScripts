@@ -70,8 +70,10 @@ windows_btcloud
 ##    ansible_connection= winrm
 ##    ansible_winrm_server_cert_validation= ignore  # Used when using a self-signed certificate
 ##
-ansible_user= Administrator
+ansible_user= Administrator			## drose
 ansible_password=100MeadowSt
 ansible_port=5986
 ansible_connection=winrm
-ansible_winrm_server_cert_validation=ignore
+ansible_winrm_server_cert_validation=ignore	## Used when using a self-signed certificate
+## ansible_winrm_scheme:  http
+

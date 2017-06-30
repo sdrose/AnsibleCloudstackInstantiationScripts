@@ -39,6 +39,11 @@
 
 
 ---
+- name:  Import variables from groupvars/all file.
+  include_vars:
+    dir: 'groupvars'
+    file: all
+
 - name:  Provision, or ensure as provisioned, VM instances in the BT Cloud.
   hosts:  linux_btcloud
   become: no

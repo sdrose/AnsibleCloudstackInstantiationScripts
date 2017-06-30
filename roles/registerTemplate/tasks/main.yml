@@ -1,15 +1,19 @@
 ---
+- name:  Include vars from file.
+  include_vars:
+    file: vars/compute_vars.yml                                    ##  ## This file is a sym link to ~/.ansible/group-vars/compute_vars.yml
+
 - name                      :  Register a new template from URL, or ensure it is already established.
   local_action              :
     module                  :  cs_template
-    api_region              :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
-    zone                    :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
+    api_region              :  "{{ cs_api_region }}"               ## This is specified in the calling playbook file, in the 'Vars:' section.
+    zone                    :  "{{ cs_zone }}"                     ## This is specified in the calling playbook file, in the 'Vars:' section.
     name                    :  "CentOS 7.2"
     display_text            :  "CentOS 7.2 OS. 'Password Script' enabled. 'Minimal' Software installed.  Does NOT start to GUI. LVM with ext3/4 file system. Ansible-deployed."
-    url                     :  "http://75.124.77.62/CentOS7-csTemplate.ova"
+    url                     :  "{{ cs_url }}{{cs_filename}}"
     hypervisor              :  VMware
     format                  :  OVA
-    os_type                 :  "CentOS 7.2"
+    os_type                 :  "{{ centos72 }}"                   ## This is defined in roles/registerTemplate/vars/compute_vars.yml file, which is a sym link to ~/.ansible/group-vars/compute_vars.yml
     is_routing              :  null
     is_featured             :  false
     is_public               :  false
@@ -17,7 +21,7 @@
     requires_hvm            :  true
     password_enabled        :  yes
     sshkey_enabled          :  true
-    state                   :  present
+    state                   :  absent
   register                  :  cs_template_return
 
 - name                      :  Display the return values from registering a template.

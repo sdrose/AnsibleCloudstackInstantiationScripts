@@ -1,35 +1,13 @@
 ###########################################################################
 ####
-####  cloudstack_provision.yml
+####  registerIso-btcloud.yml
 ####  
-####  to execute:  ansible-playbook cloudstack_provision.yml -u root 
-####               SSH Password:  (Password to unlock ~/.ssh/id_rsa
+####  to execute:  
+####               eval `ssh-agent -s`
+####               ssh-add 
+####               ssh-add -l
 ####
-####  relevant vars:  
-####
-####  In roles/cloudstack_provision/vars/main.yml
-####   http_port    : 80
-####   doc_dir      : /ansible/
-####   doc_root     : /var/www/html/ansible/
-####   max_clients  : 15
-####   server_admin : root@localhost
-####   site_root    : /vaw/www/html
-####   iso_template : "US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi"
-####   cs_1cpu4gb   
-####   cs_2cpu8gb   
-####   cs_4cpu2gb,   cs_4cpu4gb,   cs_4cpu8gb,  cs_8cpu2gb
-####   cs_8cpu8gb,   cs_8cpu12gb,  
-####   cs_12cpu12gb, cs_12cpu24gb, cs_12cpu48gb 
-####   network      : "Default"
-####   public_ip    : "75.124.77.68"
-####   cs_zone      : US-NEW-NUT-G-V-A-R-S-001
-####   api_region   : Dave_CMS4                        ##  This is in the ./cloudstack.ini file.
-####   cs_hosts     : linux_btcloud                    ##  This is a label in the inventory file housing the VM hostnames for provisioning  ...
-####
-####  In group_vars/all
-####   ansible_connection: ssh
-####   ansible_become_user: root
-####   ansible_become_pass: <password>
+####               ansible-playbook -i inventory.yml registerIso-btcloud.yml -u root 
 ####
 ####  In ./inventory.yml
 ####   ansible_user=root
@@ -37,12 +15,22 @@
 ####   ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 
-
 ---
-- name:  Provision, or ensure as provisioned, VM instances in the BT Cloud.
+- name:  Register an ISO in the BT Cloud.
   hosts:  localhost
   become: no
   gather_facts: no
+  vars:
+    liverpool           :  GB-LPL-MINI-P-V-A-R-S-001
+    nutley              :  US-NEW-NUT-G-V-A-R-S-001
+    cs_zone             :  "{{ nutley }}"
+    cs_api_region       :  Dave_CMS4                                     ##  This is in the ./cloudstack.ini file.
+    cs_hosts            :  localhost                                     ##  This is a label in the inventory
+                                                                         ##  file housing the VM hostnames for provisioning  ...
+    iso_url             :  'http://75.124.77.62/'                        ##  Either iso_url ends with '/' or iso_filename starts with '/'
+    iso_filename        :  'clonezilla-live-20170220-yakkety-amd64.iso'
+    iso_registeredName  :  'Clonezilla'
+    other_ubuntu_64     :  'Other Ubuntu (64-bit)'
   roles:
   - registerIso
 
