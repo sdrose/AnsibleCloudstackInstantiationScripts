@@ -21,7 +21,7 @@
     requires_hvm            :  true
     password_enabled        :  yes
     sshkey_enabled          :  true
-    state                   :  absent
+    state                   :  present
   register                  :  cs_template_return
 
 - name                      :  Display the return values from registering a template.

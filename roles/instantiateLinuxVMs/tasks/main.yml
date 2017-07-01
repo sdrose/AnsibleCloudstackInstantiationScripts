@@ -1,9 +1,13 @@
 ---
+- name:  Include vars from file.
+  include_vars:
+    file: vars/compute_vars.yml                               ##
+
 # Associate an IP address conditonally
 - name                 :  Create a valid Public IP Address 
   local_action         :
     module             :  cs_ip_address
-    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    api_region         :  "{{ cs_api_region }}"                  ## This is in the ./cloudstack.ini file.
     zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
     network            :  "{{ network }}"
   register             :  cs_ip_address_return
@@ -38,7 +42,7 @@
 - name                 :  Build VM instance or ensure it is already established.
   local_action         :
     module             :  cs_instance
-    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    api_region         :  "{{ cs_api_region }}"                  ## This is in the ./cloudstack.ini file.
     zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
     name               :  "{{ inventory_hostname_short }}"    ## inventory_hostname_short is a 'magic variable', hostname up to the first '.'
     service_offering   :  "{{ cs_1cpu4gb }}"                
@@ -73,7 +77,7 @@
 - name                 :  Establish NAT and create ssh portforward to VM ssh port 22.
   local_action         : 
     module             :  cs_portforward
-    api_region         :  "{{api_region}}"                  ## This is in the ./cloudstack.ini file.
+    api_region         :  "{{cs_api_region}}"                  ## This is in the ./cloudstack.ini file.
     zone               :  "{{cs_zone}}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
     network            :  "{{network}}"
     ip_address         :  "{{public_ip}}"
@@ -137,7 +141,7 @@
 - name                 :  Create/attach DATA volume to VM instance.
   local_action         :
     module             :  cs_volume
-    api_region         :  "{{ api_region }}"                  ## This is in the ./cloudstack.ini file.
+    api_region         :  "{{ cs_api_region }}"                  ## This is in the ./cloudstack.ini file.
     zone               :  "{{ cs_zone }}"                     ## Specifying the zone is REQUIRED when working in a multizone cloud environment.
     name               :  "DATA_{{ inventory_hostname_short }}"
     disk_offering      :  Custom

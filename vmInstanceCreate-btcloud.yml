@@ -5,49 +5,30 @@
 ####  to execute:  ansible-playbook cloudstack_provision.yml -u root 
 ####               SSH Password:  (Password to unlock ~/.ssh/id_rsa
 ####
-####  relevant vars:  
-####
-####  In roles/cloudstack_provision/vars/main.yml
-####   http_port    : 80
-####   doc_dir      : /ansible/
-####   doc_root     : /var/www/html/ansible/
-####   max_clients  : 15
-####   server_admin : root@localhost
-####   site_root    : /vaw/www/html
-####   iso_template : "US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi"
-####   cs_1cpu4gb   
-####   cs_2cpu8gb   
-####   cs_4cpu2gb,   cs_4cpu4gb,   cs_4cpu8gb,  cs_8cpu2gb
-####   cs_8cpu8gb,   cs_8cpu12gb,  
-####   cs_12cpu12gb, cs_12cpu24gb, cs_12cpu48gb 
-####   network      : "Default"
-####   public_ip    : "75.124.77.68"
-####   cs_zone      : US-NEW-NUT-G-V-A-R-S-001
-####   api_region   : Dave_CMS4                        ##  This is in the ./cloudstack.ini file.
-####   cs_hosts     : linux_btcloud                    ##  This is a label in the inventory file housing the VM hostnames for provisioning  ...
-####
-####  In group_vars/all
-####   ansible_connection: ssh
-####   ansible_become_user: root
-####   ansible_become_pass: <password>
-####
 ####  In ./inventory.yml
 ####   ansible_user=root
 ####   ansible_ssh_private_key_file= "/home/drose/.ssh/id_rsa"
 ####   ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
-
-
 ---
-- name:  Import variables from groupvars/all file.
-  include_vars:
-    dir: 'groupvars'
-    file: all
-
 - name:  Provision, or ensure as provisioned, VM instances in the BT Cloud.
   hosts:  linux_btcloud
   become: no
   gather_facts: no
+  vars:
+    liverpool           :  GB-LPL-MINI-P-V-A-R-S-001
+    nutley              :  US-NEW-NUT-G-V-A-R-S-001
+    cs_api_region       :  Dave_CMS4                        ##  This is in the ./cloudstack.ini file.
+    cs_zone             :  "{{ nutley }}"
+    network             :  "Default"
+    cs_hosts            :  localhost                        ##  This is a label in the inventory
+                                                            ##  file housing the VM hostnames for provisioning  ...
+    cs_url              :  "http://75.124.77.62/"
+    cs_filename         :  ""
+    iso_template : "US_UBUNTU_12.04.02_LTS_x64_1.1.0_ESXi" ##  This is a Compute-developed Template
+    #iso_template : "CentOS 7.2"                             ##  This is a template with password-script installed
+
+
   roles:
   - instantiateLinuxVMs
 

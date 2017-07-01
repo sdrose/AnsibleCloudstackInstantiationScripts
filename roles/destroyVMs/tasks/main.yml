@@ -1,4 +1,8 @@
 ---
+- name:  Include vars from file.
+  include_vars:
+    file: vars/compute_vars.yml                                    ## 
+
 # Associate an IP address conditonally
 - name                 :  Create/attach DATA volume to VM instance.
   local_action         :
